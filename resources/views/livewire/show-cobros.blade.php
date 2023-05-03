@@ -20,7 +20,7 @@
               </div>
 
 
-              <div class="flex items-center">
+                <div class="flex items-center">
 					<span>Categorias</span>
 					<select class="mx-2 form-control" wire:model="categories">
 						<option value="Atra. 91-180">Atra. 91-180</option>
@@ -34,6 +34,8 @@
            
           
           </div>
+    
+            
           <!-- mostrar solo si encuentra un post -->
           @if(count($datos))
           <table class="min-w-full divide-y divide-gray-200">
@@ -42,46 +44,42 @@
 
                   <tr>
 
-                      <th scope="col" class="w-24 cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('id')">
+                      <th scope="col" class="w-120 cursor-pointer px-12 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('id')">
 
-                      Nombres
+                     Cliente
                        
                       </th>
 
-                      <th scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('title')">
-
-                      Apellidos
-                        
-                       
-                      </th>
-
-                      <th scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('content')">
+                       <th scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('content')">
 
                       Cedula Nro.
               
                       </th>
                     
-                      
-                      <th scope="col" class="w-24 cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('id')">
-
-                      Nombres
-                       
-                      </th>
-
-                      <th scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('title')">
-
-                      Apellidos
-                        
-                       
-                      </th>
                       <th scope="col" class="w-24 cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('contrato.contrato')">
 
                         Contrato
 
 
                         </th>
+                      
+                      <th scope="col" class="w-120 cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('id')">
 
-                        <th>
+                      Operador
+                       
+                      </th>
+                    
+                      <th scope="col" class="w-120 cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('id')">
+
+                        Usuario
+                        
+                        </th>
+                        <th scope="col" class="w-120 cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('id')">
+
+                            Comentario
+
+                            </th>
+                        <th scope="col" class="w-120 cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('id')">
 
                         Vencimiento
 
@@ -106,46 +104,45 @@
 
 							<td class="px-6 py-4">
 
-								{{ $dato->nombres }}
+								{{ $dato->nombres  . ' ' . $dato->apellidos}}
 
 
 							</td>
 
-							<td class="px-6 py-4">
-
-								<span>
-
-									{{ $dato->apellidos }}
-
-								</span>
-
-							</td>
 
 							<td class="px-6 py-4">
 								{{ $dato->cino }}
 
 
 							</td>
+                            
+                            <td class="px-6 py-4">
 
+                                {{ $dato->contrato }}
+
+
+                            </td>
 							<td class="px-6 py-4">
 
-								{{ $dato->nombre_user }}
+								{{ $dato->nombre_user . ' ' . $dato->apelli_user  }}
 
 
 							</td>
-							<td class="px-6 py-4">
 
-								{{ $dato->apelli_user }}
+                            <td class="px-6 py-4">
 
-
-							</td>
-
-							<td class="px-6 py-4">
-
-								{{ $dato->contrato }}
+                            {{ $dato->usuario }}
 
 
-							</td>
+                            </td>
+
+                            <td class="px-6 py-4">
+
+                            {{ $dato->comentarios }}
+
+
+                            </td>
+
 
 							<td class="px-6 py-4">
 

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Livewire;
+use Illuminate\Database\Query\Builder;
+use App\View\Components\table;
 use Illuminate\Support\Facades\DB;
 
 use Livewire\Component;
@@ -53,21 +55,31 @@ class ShowCobros extends Component
 
 
         if($this->readyToLoad){
+            //   $data = db::table('comentarios')->select(db::raw('max(comentarios.fecha) as fecha'))->join('contrato','comentarios.idcontrato','=', 'contrato.idcontrato')->groupBy('comentarios.idcontrato')->paginate($this->cant);
+            //$data = db::select("SELECT MAX(comentarios.fecha)from comentarios,contrato where comentarios.idcontrato = contrato.idcontrato GROUP by (comentarios.idcontrato); ");
             
+
 
             $datos = DB::TABLE('clientes')
             ->join('contrato', 'clientes.idclientes', '=', 'contrato.idcliente')
             ->join('cuotas' , 'contrato.idcontrato',  '=', 'cuotas.idcontrato')
+            ->join('comentarios' , 'contrato.idcontrato',  '=', 'comentarios.idcontrato')
             ->join('empleados','clientes.telecob', '=', 'empleados.idempleado')
-            ->select('clientes.nombres', 'clientes.apellidos', 'clientes.cino', 'empleados.nombres AS nombre_user', 'empleados.apellidos AS apelli_user', 'contrato.contrato',DB::raw('MIN(cuotas.vcto) AS primera_fecha_vencida'), DB::raw('SUM(cuotas.monto) AS suma_cuotas_vencidas') )
+            ->select('clientes.nombres', 'clientes.apellidos', 'clientes.cino', 'empleados.nombres AS nombre_user', 'empleados.apellidos AS apelli_user', 'contrato.contrato',DB::raw('MIN(cuotas.vcto) AS primera_fecha_vencida'), DB::raw('SUM(cuotas.monto) AS suma_cuotas_vencidas'),  'comentarios.comentario as comentarios', 'comentarios.usuario',  DB::raw('MAX(comentarios.fecha) AS fecha_coment'))
             ->where('cuotas.vcto', '<=', '2023-04-30')
             ->where('cuotas.pago', '=', '0')
             ->where('contrato.tipomovim','=','certificado')
             ->where('cuotas.categoria','=', $this->categories)
-            ->where('clientes.nombres','like','%'. $this->search . '%')
+           // ->where('comentarios.fecha', '=',db::table('comentarios')->select(db::raw('max(comentarios.fecha) as fecha'))->join('contrato','comentarios.idcontrato','=', 'contrato.idcontrato')->groupBy('comentarios.idcontrato')->get())
+             ->where('comentarios.fecha','=', function(Builder $query){
+            //     $query->select("SELECT MAX(comentarios.fecha)from comentarios,contrato where comentarios.idcontrato = contrato.idcontrato GROUP by (comentarios.idcontrato)");
+                    $query->select(db::raw('max(comentarios.fecha) as fecha'))->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->groupBy('comentarios.idcontrato');
+              } )
+            ->where('contrato.contrato','like','%'. $this->search . '%')
             // ->orWhere('clientes.cino','like','%'. $this->search . '%')
-            ->groupBy('clientes.idclientes', 'contrato.idcontrato')
+            ->groupBy('clientes.idclientes', 'contrato.idcontrato', 'comentarios.idcontrato' )
             ->paginate($this->cant);
+       
         }
         else{
             $datos = [];
