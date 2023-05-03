@@ -92,6 +92,14 @@
 
 
                         </th>
+                        
+                        <th scope="col" class="w-24 cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="order('suma_cuotas_vencidas')">
+
+                        Extracto de Cta.
+
+
+
+                        </th>
                   </tr>
 
               </thead>
@@ -157,6 +165,13 @@
 
 
 							</td>
+                            <td class="px-6 py-4">
+
+                            <a href="http://190.104.168.219/jparaiso/cp/extracta.php?id={{ $dato->idcontrato }}">Ver Extracto</a>
+                            
+
+
+                            </td>
 						</tr>
                   
        
