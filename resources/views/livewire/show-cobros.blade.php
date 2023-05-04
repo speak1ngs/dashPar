@@ -35,7 +35,6 @@
           
           </div>
     
-            
           <!-- mostrar solo si encuentra un post -->
           @if(count($datos))
           <table class="min-w-full divide-y divide-gray-200">

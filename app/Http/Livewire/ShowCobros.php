@@ -57,8 +57,7 @@ class ShowCobros extends Component
         if($this->readyToLoad){
             //   $data = db::table('comentarios')->select(db::raw('max(comentarios.fecha) as fecha'))->join('contrato','comentarios.idcontrato','=', 'contrato.idcontrato')->groupBy('comentarios.idcontrato')->paginate($this->cant);
             //$data = db::select("SELECT MAX(comentarios.fecha)from comentarios,contrato where comentarios.idcontrato = contrato.idcontrato GROUP by (comentarios.idcontrato); ");
-            
-
+           // $data = db::table('comentarios')->select('fecha')->join('contrato','comentarios.idcontrato','contrato.idcontrato')->where('comentarios.fecha','>', '2022-12-31')->groupBy('comentarios.idcontrato')->distinct();
 
             $datos = DB::TABLE('clientes')
             ->join('contrato', 'clientes.idclientes', '=', 'contrato.idcliente')
@@ -70,9 +69,12 @@ class ShowCobros extends Component
             ->where('cuotas.pago', '=', '0')
             ->where('contrato.tipomovim','=','certificado')
             ->where('cuotas.categoria','=', $this->categories)
-             ->where('comentarios.fecha','=', function(Builder $query){
-                    $query->select(db::raw('max(comentarios.fecha) as fecha'))->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->groupBy('comentarios.idcontrato');
-              } )
+            ->where('comentarios.fecha','>','2022-12-31')
+             ->whereIn('comentarios.fecha', function(Builder $query){
+                    // $query->select(db::raw('max(comentarios.fecha) as fecha'))->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->where('comentarios.fecha','>', '2020-01-01')->groupBy('comentarios.idcontrato');
+                    $query->select('comentarios.fecha')->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->where('comentarios.fecha','>', '2022-12-31')->groupBy('comentarios.idcontrato')->distinct();
+              
+                } )
             ->where('contrato.contrato','like','%'. $this->search . '%')
             ->groupBy('clientes.idclientes', 'contrato.idcontrato', 'comentarios.idcontrato' )
             ->paginate($this->cant);
