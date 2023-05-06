@@ -116,9 +116,10 @@
 
 							</td>
 
-
+                          
 							<td class="px-6 py-4">
-								{{ $dato->cino }}
+                              
+								@livewire('listar-contratos',['dato' => $dato->idclientes , 'ci' => $dato->cino , 'nombres' => $dato->nombres . ' ' . $dato->apellidos], key($dato->idcontrato))
 
 
 							</td>
@@ -138,15 +139,15 @@
 
                             <td class="px-6 py-4">
 
-                            {{ $dato->usuario }}
+                            {{ $dato-> usuario}}
 
 
                             </td>
 
                             <td class="px-6 py-4">
 
-                            {{ $dato->comentarios }}
-
+                         
+                                {{$dato->comentarios}}
 
                             </td>
 
@@ -197,6 +198,8 @@
 
 
 </div>
+
+
 
 
 

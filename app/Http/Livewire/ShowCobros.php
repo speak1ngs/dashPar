@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Livewire;
+
+
+
 use Illuminate\Database\Query\Builder;
-use App\View\Components\table;
 use Illuminate\Support\Facades\DB;
 
 use Livewire\Component;
@@ -18,7 +20,8 @@ class ShowCobros extends Component
     public $search ='';
     public $categories= 'Atra. 91-180';
     public $readyToLoad = false;
-
+ 
+  
 
     protected $queryString = [
         'cant'=>['except'=> '10'],
@@ -38,7 +41,7 @@ class ShowCobros extends Component
         $this->search ='';
         $this->categories= 'Atra. 91-180';
         $this->readyToLoad = true;
-
+      
     }
 
     public function updatingSearch()
@@ -64,18 +67,21 @@ class ShowCobros extends Component
             ->join('cuotas' , 'contrato.idcontrato',  '=', 'cuotas.idcontrato')
             ->join('comentarios' , 'contrato.idcontrato',  '=', 'comentarios.idcontrato')
             ->join('empleados','clientes.telecob', '=', 'empleados.idempleado')
-            ->select('clientes.nombres', 'clientes.apellidos', 'clientes.cino', 'empleados.nombres AS nombre_user', 'empleados.apellidos AS apelli_user', 'contrato.contrato',DB::raw('MIN(cuotas.vcto) AS primera_fecha_vencida'), DB::raw('SUM(cuotas.monto) AS suma_cuotas_vencidas'),  'comentarios.comentario as comentarios', 'comentarios.usuario',  DB::raw('MAX(comentarios.fecha) AS fecha_coment'), 'contrato.idcontrato' )
+             ->select('clientes.nombres', 'clientes.apellidos', 'clientes.cino', 'empleados.nombres AS nombre_user', 'empleados.apellidos AS apelli_user', 'contrato.contrato',DB::raw('MIN(cuotas.vcto) AS primera_fecha_vencida'), DB::raw('SUM(cuotas.monto) AS suma_cuotas_vencidas') ,  'comentarios.comentario as comentarios', 'comentarios.usuario',  DB::raw('MAX(comentarios.fecha) AS fecha_coment'), 'contrato.idcontrato', 'clientes.idclientes' )
+            //->select('clientes.nombres', 'clientes.apellidos', 'clientes.cino', 'empleados.nombres AS nombre_user', 'empleados.apellidos AS apelli_user', 'contrato.contrato',DB::raw('MIN(cuotas.vcto) AS primera_fecha_vencida'), DB::raw('SUM(cuotas.monto) AS suma_cuotas_vencidas') , 'contrato.idcontrato' )
             ->where('cuotas.vcto', '<=', '2023-04-30')
             ->where('cuotas.pago', '=', '0')
             ->where('contrato.tipomovim','=','certificado')
             ->where('cuotas.categoria','=', $this->categories)
             ->where('comentarios.fecha','>','2022-12-31')
-             ->whereIn('comentarios.fecha', function(Builder $query){
-                    // $query->select(db::raw('max(comentarios.fecha) as fecha'))->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->where('comentarios.fecha','>', '2020-01-01')->groupBy('comentarios.idcontrato');
-                    $query->select('comentarios.fecha')->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->where('comentarios.fecha','>', '2022-12-31')->groupBy('comentarios.idcontrato')->distinct();
+             ->where('comentarios.fecha','=',function(Builder $query){
+                    $query->select(db::raw('max(comentarios.fecha) as fecha'))->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->where('comentarios.fecha','>', '2022-12-31')->groupBy('comentarios.idcontrato')->take(1)->distinct();
+                    // $query->select('comentarios.fecha')->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->where('comentarios.fecha','>', '2022-12-31')->groupBy('comentarios.idcontrato')->limit(1)->distinct();
+                    // $query->select('comentarios.fecha')->from('comentarios')->whereColumn('comentarios.idcontrato','contrato.idcontrato')->where('comentarios.fecha','>', '2022-12-31')->groupBy('comentarios.idcontrato')->take(1)->distinct();
               
-                } )
+                 } )
             ->where('contrato.contrato','like','%'. $this->search . '%')
+            // ->groupBy('clientes.idclientes', 'contrato.idcontrato', 'comentarios.idcontrato' )
             ->groupBy('clientes.idclientes', 'contrato.idcontrato', 'comentarios.idcontrato' )
             ->paginate($this->cant);
        
@@ -115,4 +121,13 @@ class ShowCobros extends Component
         }
     }
 
+    public function listContrat($id)
+    {
+      
+       $selectUser = db::table('contratos')
+        ->join('clientes','contrato.idcliente','=','clientes.idclientes')
+        ->select('idcontrato', 'contrato', 'clientes.nombres', 'clientes.apellidos')
+                            ->where('contrato.clientes','=', $id);
+
+    }
 }
